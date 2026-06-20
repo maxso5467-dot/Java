@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -19,7 +20,14 @@ public class LoginUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        if (permissions == null) {
+            return List.of();
+        }
+        return permissions.stream()
+                .filter(permission -> permission != null && !permission.isBlank())
+                .distinct()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
     @Override
@@ -49,6 +57,6 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user != null && "0".equals(user.getStatus()) && !Integer.valueOf(1).equals(user.getDelFlag());
     }
 }

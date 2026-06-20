@@ -2,6 +2,13 @@
 CREATE DATABASE IF NOT EXISTS myblog DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE myblog;
 
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS t_role_menu;
+DROP TABLE IF EXISTS t_user_role;
+DROP TABLE IF EXISTS t_article_tag;
+DROP TABLE IF EXISTS t_menu;
+DROP TABLE IF EXISTS t_role;
+DROP TABLE IF EXISTS t_tag;
 DROP TABLE IF EXISTS t_article;
 CREATE TABLE t_article (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -85,6 +92,73 @@ CREATE TABLE t_user (
     del_flag INT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
+CREATE TABLE t_tag (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL COMMENT '标签名',
+    remark VARCHAR(512) DEFAULT NULL COMMENT '备注',
+    create_by BIGINT DEFAULT NULL,
+    create_time DATETIME DEFAULT NULL,
+    update_by BIGINT DEFAULT NULL,
+    update_time DATETIME DEFAULT NULL,
+    del_flag INT DEFAULT 0 COMMENT '删除标志',
+    UNIQUE KEY uk_tag_name (name, del_flag)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='标签表';
+
+CREATE TABLE t_article_tag (
+    article_id BIGINT NOT NULL,
+    tag_id BIGINT NOT NULL,
+    PRIMARY KEY (article_id, tag_id),
+    KEY idx_article_tag_tag (tag_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章标签关联表';
+
+CREATE TABLE t_role (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(64) NOT NULL COMMENT '角色名称',
+    role_key VARCHAR(64) NOT NULL COMMENT '角色权限字符串',
+    role_sort INT DEFAULT 0 COMMENT '显示顺序',
+    status CHAR(1) DEFAULT '0' COMMENT '状态(0正常 1停用)',
+    create_by BIGINT DEFAULT NULL,
+    create_time DATETIME DEFAULT NULL,
+    update_by BIGINT DEFAULT NULL,
+    update_time DATETIME DEFAULT NULL,
+    del_flag INT DEFAULT 0 COMMENT '删除标志',
+    UNIQUE KEY uk_role_key (role_key, del_flag)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
+
+CREATE TABLE t_menu (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    menu_name VARCHAR(64) NOT NULL COMMENT '菜单名称',
+    parent_id BIGINT DEFAULT 0 COMMENT '父菜单ID',
+    order_num INT DEFAULT 0 COMMENT '显示顺序',
+    path VARCHAR(200) DEFAULT '' COMMENT '路由地址',
+    component VARCHAR(255) DEFAULT NULL COMMENT '组件路径',
+    menu_type CHAR(1) DEFAULT 'C' COMMENT '类型(M目录 C菜单 F按钮)',
+    visible CHAR(1) DEFAULT '0' COMMENT '显示状态',
+    status CHAR(1) DEFAULT '0' COMMENT '菜单状态',
+    perms VARCHAR(128) DEFAULT NULL COMMENT '权限标识',
+    icon VARCHAR(100) DEFAULT '#' COMMENT '图标',
+    create_by BIGINT DEFAULT NULL,
+    create_time DATETIME DEFAULT NULL,
+    update_by BIGINT DEFAULT NULL,
+    update_time DATETIME DEFAULT NULL,
+    del_flag INT DEFAULT 0 COMMENT '删除标志',
+    KEY idx_menu_parent (parent_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限表';
+
+CREATE TABLE t_user_role (
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    KEY idx_user_role_role (role_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联表';
+
+CREATE TABLE t_role_menu (
+    role_id BIGINT NOT NULL,
+    menu_id BIGINT NOT NULL,
+    PRIMARY KEY (role_id, menu_id),
+    KEY idx_role_menu_menu (menu_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单关联表';
+
 -- 插入测试数据
 INSERT INTO t_user (id, user_name, nick_name, password, type, status, email, phonenumber, sex, create_time, update_time) VALUES
 (1, 'admin', '管理员', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EHs', '1', '0', 'admin@xyzy.com', '13800138000', '0', NOW(), NOW());
@@ -106,5 +180,34 @@ INSERT INTO t_comment (id, type, article_id, root_id, content, to_comment_user_i
 INSERT INTO t_link (id, name, logo, description, address, status, create_time, update_time) VALUES
 (1, 'GitHub', 'https://github.githubassets.com/favicons/favicon.svg', '全球最大的开源社区', 'https://github.com', '0', NOW(), NOW()),
 (2, 'Stack Overflow', 'https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico', '技术问答社区', 'https://stackoverflow.com', '0', NOW(), NOW());
+
+INSERT INTO t_tag (id, name, remark, create_by, create_time, update_by, update_time) VALUES
+(1, 'Spring Boot', 'Spring Boot 技术', 1, NOW(), 1, NOW()),
+(2, 'Java', 'Java 技术', 1, NOW(), 1, NOW()),
+(3, 'MySQL', 'MySQL 技术', 1, NOW(), 1, NOW());
+
+INSERT INTO t_article_tag (article_id, tag_id) VALUES (1, 1), (2, 2), (3, 3);
+
+INSERT INTO t_role (id, role_name, role_key, role_sort, status, create_by, create_time, update_by, update_time) VALUES
+(1, '超级管理员', 'admin', 1, '0', 1, NOW(), 1, NOW());
+
+INSERT INTO t_menu (id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, create_by, create_time) VALUES
+(1, '内容管理', 0, 1, 'content', NULL, 'M', '0', '0', NULL, 'document', 1, NOW()),
+(2, '系统管理', 0, 2, 'system', NULL, 'M', '0', '0', NULL, 'system', 1, NOW()),
+(101, '文章查询', 1, 1, '', NULL, 'F', '0', '0', 'content:article:list', '#', 1, NOW()),
+(102, '文章新增', 1, 2, '', NULL, 'F', '0', '0', 'content:article:add', '#', 1, NOW()),
+(103, '文章修改', 1, 3, '', NULL, 'F', '0', '0', 'content:article:edit', '#', 1, NOW()),
+(104, '文章删除', 1, 4, '', NULL, 'F', '0', '0', 'content:article:remove', '#', 1, NOW()),
+(111, '分类管理', 1, 5, '', NULL, 'F', '0', '0', 'content:category:manage', '#', 1, NOW()),
+(112, '标签管理', 1, 6, '', NULL, 'F', '0', '0', 'content:tag:manage', '#', 1, NOW()),
+(113, '友链管理', 1, 7, '', NULL, 'F', '0', '0', 'content:link:manage', '#', 1, NOW()),
+(201, '用户管理', 2, 1, '', NULL, 'F', '0', '0', 'system:user:manage', '#', 1, NOW()),
+(202, '角色管理', 2, 2, '', NULL, 'F', '0', '0', 'system:role:manage', '#', 1, NOW()),
+(203, '菜单管理', 2, 3, '', NULL, 'F', '0', '0', 'system:menu:manage', '#', 1, NOW());
+
+INSERT INTO t_user_role (user_id, role_id) VALUES (1, 1);
+INSERT INTO t_role_menu (role_id, menu_id) SELECT 1, id FROM t_menu;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 COMMIT;
