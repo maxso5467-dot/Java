@@ -1,0 +1,7 @@
+.idea/
+.m2/
+**/target/
+release/
+*.log
+hs_err_pid*.log
+
