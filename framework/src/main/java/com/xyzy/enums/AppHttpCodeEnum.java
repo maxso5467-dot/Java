@@ -2,6 +2,9 @@ package com.xyzy.enums;
 
 public enum AppHttpCodeEnum {
     SUCCESS(200, "操作成功"),
+    VALIDATION_ERROR(400, "请求参数错误"),
+    DATA_NOT_FOUND(404, "数据不存在"),
+    DATA_CONFLICT(409, "数据冲突"),
     NEED_LOGIN(401, "需要登录后操作"),
     NO_OPERATOR_AUTH(403, "无权限操作"),
     SYSTEM_ERROR(500, "出现错误"),
