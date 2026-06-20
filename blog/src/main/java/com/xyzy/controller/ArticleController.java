@@ -2,15 +2,17 @@ package com.xyzy.controller;
 
 import com.xyzy.domain.ResponseResult;
 import com.xyzy.service.ArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/article")
 public class ArticleController {
 
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
+
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
+    }
 
     @GetMapping("/hotArticleList")
     public ResponseResult hotArticleList() {
