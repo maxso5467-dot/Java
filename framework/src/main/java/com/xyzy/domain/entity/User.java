@@ -25,6 +25,7 @@ public class User {
     private String email;
     private String phonenumber;
     private String sex;
+    private String avatar;
 
     @TableField(fill = FieldFill.INSERT)
     private Long createBy;
