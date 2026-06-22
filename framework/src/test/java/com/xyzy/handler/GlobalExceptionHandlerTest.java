@@ -3,6 +3,7 @@ package com.xyzy.handler;
 import com.xyzy.domain.ResponseResult;
 import com.xyzy.enums.AppHttpCodeEnum;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,5 +20,16 @@ class GlobalExceptionHandlerTest {
         assertEquals(AppHttpCodeEnum.SYSTEM_ERROR.getCode(), result.getCode());
         assertEquals(AppHttpCodeEnum.SYSTEM_ERROR.getMsg(), result.getMsg());
         assertFalse(result.getMsg().contains("secret"));
+    }
+
+    @Test
+    void mapsBadCredentialsToLoginError() {
+        GlobalExceptionHandler handler = new GlobalExceptionHandler();
+
+        ResponseResult<?> result = handler.authenticationExceptionHandler(
+                new BadCredentialsException("Bad credentials"));
+
+        assertEquals(AppHttpCodeEnum.LOGIN_ERROR.getCode(), result.getCode());
+        assertEquals(AppHttpCodeEnum.LOGIN_ERROR.getMsg(), result.getMsg());
     }
 }

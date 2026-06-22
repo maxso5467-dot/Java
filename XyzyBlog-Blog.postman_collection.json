@@ -1,0 +1,461 @@
+{
+	"info": {
+		"_postman_id": "xyzy-blog-apis",
+		"name": "XyzyBlog - 前台接口",
+		"description": "XyzyBlog 博客系统前台 blog 模块全部接口\n\nBase URL: http://localhost:7777\n\n使用说明：\n1. 先调「用户注册」创建账号，再调「登录」获取 token\n2. 登录后，Collection Variables 中的 token 会自动更新\n3. 需要登录的接口会自动携带 token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:7777",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "noauth"
+	},
+	"item": [
+		{
+			"name": "文章",
+			"item": [
+				{
+					"name": "热门文章",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('返回 code=200', () => pm.response.json().code === 200);",
+									"pm.test('data 是数组', () => Array.isArray(pm.response.json().data));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/article/hotArticleList",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", "hotArticleList"]
+						}
+					}
+				},
+				{
+					"name": "文章列表",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('data 含 rows 和 total', () => {",
+									"    const d = pm.response.json().data;",
+									"    pm.expect(d).to.have.property('rows');",
+									"    pm.expect(d).to.have.property('total');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/article/articleList?pageNum=1&pageSize=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", "articleList"],
+							"query": [
+								{"key": "pageNum", "value": "1"},
+								{"key": "pageSize", "value": "10"},
+								{"key": "categoryId", "value": "", "disabled": true}
+							]
+						}
+					}
+				},
+				{
+					"name": "文章列表 - 按分类筛选",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/article/articleList?pageNum=1&pageSize=10&categoryId=2",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", "articleList"],
+							"query": [
+								{"key": "pageNum", "value": "1"},
+								{"key": "pageSize", "value": "10"},
+								{"key": "categoryId", "value": "2"}
+							]
+						}
+					}
+				},
+				{
+					"name": "文章详情",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('返回文章内容', () => pm.response.json().data.content);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/article/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", "1"]
+						}
+					}
+				},
+				{
+					"name": "更新浏览量",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "{{baseUrl}}/article/updateViewCount/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", "updateViewCount", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "分类",
+			"item": [
+				{
+					"name": "分类列表",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('data 是数组', () => Array.isArray(pm.response.json().data));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/category/getCategoryList",
+							"host": ["{{baseUrl}}"],
+							"path": ["category", "getCategoryList"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "友链",
+			"item": [
+				{
+					"name": "友链列表",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('data 是数组', () => Array.isArray(pm.response.json().data));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/link/getAllLink",
+							"host": ["{{baseUrl}}"],
+							"path": ["link", "getAllLink"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "评论",
+			"item": [
+				{
+					"name": "文章评论列表",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('data 含 rows 和 total', () => {",
+									"    const d = pm.response.json().data;",
+									"    pm.expect(d).to.have.property('rows');",
+									"    pm.expect(d).to.have.property('total');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/comment/commentList?articleId=1&pageNum=1&pageSize=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["comment", "commentList"],
+							"query": [
+								{"key": "articleId", "value": "1"},
+								{"key": "pageNum", "value": "1"},
+								{"key": "pageSize", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "友链评论列表",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/comment/linkCommentList?pageNum=1&pageSize=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["comment", "linkCommentList"],
+							"query": [
+								{"key": "pageNum", "value": "1"},
+								{"key": "pageSize", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "发表评论",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "token", "value": "{{token}}", "type": "text"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"articleId\": 1,\n  \"type\": \"0\",\n  \"rootId\": -1,\n  \"content\": \"这是一条测试评论\",\n  \"toCommentUserId\": -1,\n  \"toCommentId\": -1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/comment",
+							"host": ["{{baseUrl}}"],
+							"path": ["comment"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "认证",
+			"item": [
+				{
+					"name": "用户注册",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('code=200', () => pm.response.json().code === 200);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"testuser\",\n  \"nickName\": \"测试用户\",\n  \"password\": \"123456\",\n  \"email\": \"test@xyzy.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["user", "register"]
+						}
+					}
+				},
+				{
+					"name": "登录",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.test('返回 token', () => pm.response.json().data.token);",
+									"const token = pm.response.json().data.token;",
+									"if (token) pm.collectionVariables.set('token', token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"admin\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["login"]
+						}
+					}
+				},
+				{
+					"name": "退出登录",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));",
+									"pm.collectionVariables.set('token', '');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "token", "value": "{{token}}", "type": "text"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "用户",
+			"item": [
+				{
+					"name": "查看个人信息",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "token", "value": "{{token}}", "type": "text"}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/user/userInfo",
+							"host": ["{{baseUrl}}"],
+							"path": ["user", "userInfo"]
+						}
+					}
+				},
+				{
+					"name": "修改个人信息",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('状态码 200', () => pm.response.to.have.status(200));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "token", "value": "{{token}}", "type": "text"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nickName\": \"新昵称\",\n  \"email\": \"newemail@xyzy.com\",\n  \"sex\": \"0\",\n  \"avatar\": \"https://example.com/avatar.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/userInfo",
+							"host": ["{{baseUrl}}"],
+							"path": ["user", "userInfo"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

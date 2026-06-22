@@ -6,6 +6,7 @@ import com.xyzy.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +45,11 @@ public class GlobalExceptionHandler {
     public ResponseResult duplicateKeyHandler(DuplicateKeyException e) {
         log.warn("数据库唯一约束冲突", e);
         return ResponseResult.errorResult(AppHttpCodeEnum.DATA_CONFLICT.getCode(), AppHttpCodeEnum.DATA_CONFLICT.getMsg());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseResult authenticationExceptionHandler(AuthenticationException e) {
+        return ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR.getCode(), AppHttpCodeEnum.LOGIN_ERROR.getMsg());
     }
 
     @ExceptionHandler(Exception.class)

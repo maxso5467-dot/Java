@@ -49,7 +49,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Article::getStatus, SystemConstants.ARTICLE_STATUS_NORMAL);
         queryWrapper.eq(Objects.nonNull(categoryId) && categoryId > 0, Article::getCategoryId, categoryId);
-        queryWrapper.eq(Article::getIsTop, SystemConstants.IS_TOP);
         queryWrapper.orderByDesc(Article::getIsTop);
         Page<Article> page = new Page<>(pageNum, pageSize);
         page(page, queryWrapper);

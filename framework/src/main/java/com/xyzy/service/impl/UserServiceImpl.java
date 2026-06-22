@@ -50,11 +50,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!StringUtils.hasText(user.getNickName())) {
             throw new SystemException(AppHttpCodeEnum.NICKNAME_NOT_NULL);
         }
+        if (!StringUtils.hasText(user.getEmail())) {
+            throw new SystemException(AppHttpCodeEnum.EMAIL_NOT_NULL);
+        }
         if (userNameExist(user.getUserName())) {
             throw new SystemException(AppHttpCodeEnum.USERNAME_EXIST);
         }
         if (nickNameExist(user.getNickName())) {
             throw new SystemException(AppHttpCodeEnum.NICKNAME_EXIST);
+        }
+        if (emailExist(user.getEmail())) {
+            throw new SystemException(AppHttpCodeEnum.EMAIL_EXIST);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         save(user);
@@ -70,6 +76,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private boolean nickNameExist(String nickName) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getNickName, nickName);
+        return count(queryWrapper) > 0;
+    }
+
+    private boolean emailExist(String email) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getEmail, email);
         return count(queryWrapper) > 0;
     }
 }

@@ -161,7 +161,7 @@ CREATE TABLE t_role_menu (
 
 -- 插入测试数据
 INSERT INTO t_user (id, user_name, nick_name, password, type, status, email, phonenumber, sex, create_time, update_time) VALUES
-(1, 'admin', '管理员', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EHs', '1', '0', 'admin@xyzy.com', '13800138000', '0', NOW(), NOW());
+(1, 'admin', '管理员', '$2a$10$zeVhaGiCJexFEuXyiuORRORy5UyEE5yvj7Os/Sy3xctcjh8szbgfe', '1', '0', 'admin@xyzy.com', '13800138000', '0', NOW(), NOW());
 
 INSERT INTO t_category (id, name, pid, description, status, create_time, update_time) VALUES
 (1, 'Java', -1, 'Java相关文章', '0', NOW(), NOW()),
