@@ -85,6 +85,9 @@ public class RedisCache {
     }
 
     public void incrementCacheMapValue(String key, String hKey, long v) {
-        redisTemplate.opsForHash().increment(key, hKey, v);
+        HashOperations<String, String, Object> opsForHash = redisTemplate.opsForHash();
+        Object current = opsForHash.get(key, hKey);
+        long currentValue = current == null ? 0L : Long.parseLong(current.toString());
+        opsForHash.put(key, hKey, currentValue + v);
     }
 }

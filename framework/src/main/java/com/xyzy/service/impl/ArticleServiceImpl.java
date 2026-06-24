@@ -54,7 +54,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         page(page, queryWrapper);
         List<Article> articles = page.getRecords();
         articles = articles.stream().map(article -> {
-            Integer viewCount = redisCache.getCacheMapValue(SystemConstants.REDIS_ARTICLE_VIEWCOUNT, article.getId().toString());
+            Number viewCount = redisCache.getCacheMapValue(SystemConstants.REDIS_ARTICLE_VIEWCOUNT, article.getId().toString());
             if (Objects.nonNull(viewCount)) {
                 article.setViewCount(viewCount.longValue());
             }
@@ -74,7 +74,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ResponseResult getArticleDetail(Long id) {
         Article article = getById(id);
-        Integer viewCount = redisCache.getCacheMapValue(SystemConstants.REDIS_ARTICLE_VIEWCOUNT, id.toString());
+        Number viewCount = redisCache.getCacheMapValue(SystemConstants.REDIS_ARTICLE_VIEWCOUNT, id.toString());
         if (Objects.nonNull(viewCount)) {
             article.setViewCount(viewCount.longValue());
         }
